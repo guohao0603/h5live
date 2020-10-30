@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>视频直播测试</title>
+<link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon" />
+<link href="css/jq22.css" type="text/css" rel="stylesheet">
+<script src="./js/adressArray.js"></script>
+<link href="./source/rtmp/video-js-5.19.min.css" rel="stylesheet">
+<script src="./source/rtmp/video-5.19.min.js"></script>
+<style>
+  #rtmp-player{
+    width: 1120px;
+    height: 360px;
+    object-fit: fill;
+  }
+</style>
+</head>
+<body>
+ <div class="container">
+    <ul id="tabs">
+      <li><a href="#" title="tab1">rtmp</a></li>
+      <li><a href="#" title="tab2">hls</a></li>
+      <li><a href="#" title="tab3">http-Flv</a></li>
+      <li><a href="#" title="tab4">video</a></li>
+    </ul>
+    <div id="content">
+        <div id="tab1">
+          <div class="video-content">
+            <video id="rtmp-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"
+            width="1120" height="400" style="object-fit: fill;">
+                <!--src: 规定媒体文件的 URL  type:规定媒体资源的类型-->
+                <source src='rtmp://58.200.131.2:1935/livetv/cctv1' type='rtmp/flv' id="rtmp-source"/>
+            </video>
+          </div>
+          <div class="v-select">
+            <select name="" id="rtmp">
+            </select>
+          </div>
+          <div class="v-btn" id="rtmp-btn">播放</div>
+        </div>
+        <div id="tab2">
+          <div class="jump">
+            <a class="v-btn"href="./source/hlsjs/index.html" target="_blank">跳转新窗口</a>
+          </div>
+          <div class="item">
+            <div class="v-select">
+              <select name="" id="hls">
+              </select>
+            </div>
+            <div class="v-btn" id='create-code'>生成二维码</div>
+          </div>
+          <div id='code'>
+            
+          </div>
+        </div>
+        <div id="tab3">
+          <a class="v-btn" href="./source/flvjs/index.html" target="_blank">跳转新窗口</a>
+        </div>
+        <div id="tab4">
+          <a class="v-btn" href="./source/videojs/index.html" target="_blank">跳转新窗口</a>
+        </div>
+    </div>
+ </div>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/qrcode.js"></script>
+<script>
+
+  let codeNode = document.getElementById('code')
+  let hlsChange = document.getElementById('hls')
+  let createCode = document.getElementById('create-code')
+  let url = 'http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8'
+  let qrcode = new QRCode(codeNode,{
+        width:200,
+        height:200,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+  })
+  hlsChange.onchange = function(){
+    url = hlsChange.value
+  }
+  createCode.addEventListener('click',function(){
+    if (!url){
+      alert('请选择播放源')
+    }else{
+      qrcode.clear(); // 清除代码
+      qrcode.makeCode("http://guohao.utools.club/source/mobile/index.html?url="+url); // 生成另外一个二维码
+    }
+  })
+
+  // 初始化 select
+  function addOption(node,list){
+      let obj=document.getElementById(node);
+      for(let i=0;i<list.length;i++){
+            obj.options[i]=new Option(list[i].key,list[i].value);    //方法三：
+      }
+    }
+  //添加选项option
+  addOption('rtmp',rtmpArray)
+  function hideTab(){
+        $("#tab1").hide(); 
+        $("#tab2").hide(); 
+        $("#tab3").hide(); 
+        $("#tab4").hide(); 
+  }
+(function() {
+  hideTab();
+	$("#tabs li:first").attr("id","current"); // Activate first tab
+	$("#content div:first").fadeIn(); // Show first tab content
+    $('#tabs a').click(function(e) {
+        e.preventDefault();        
+        hideTab();
+        $("#tabs li").attr("id",""); //Reset id's
+        $(this).parent().attr("id","current"); // Activate this
+        let tabStr = $('#' + $(this).attr('title')).selector
+        if (tabStr === '#tab1'){
+          addOption('rtmp',rtmpArray)
+        }else if (tabStr === '#tab2'){
+          addOption('hls',hlsArray)
+        }
+        $('#' + $(this).attr('title')).fadeIn(); // Show content for current tab
+    });
+})()
+</script>
+<!-- rtmp -->
+<script src="./source/rtmp/index.js"></script>
+</body>
+</html>

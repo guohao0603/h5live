@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>video</title>
+</head>
+<body>
+    <video src="./test1.mp4" id='_source2'width="300" height="255" controls></video>
+
+    <!-- 备用地址切换 当第一个视频出错自动播放第二个 -->
+    <!-- <video id='_source' width="300" height="255" controls>
+        <source src="./test.mp4" type="video/mp4">
+        <source src="./test2.mp4" type="video/mp4">
+    </video> -->
+</body>
+<script>
+    // let v = document.getElementById('_source')
+    // setTimeout(()=>{
+    //     console.log('source',v.currentSrc)
+    // },1000)
+
+    let v = document.getElementById('_source2')
+    console.log('v.duration',v.duration)
+    // loadstart
+    v.addEventListener('loadstart',function(e){
+        console.log('loadstart',v.duration)
+    })
+    // durationchange
+    v.addEventListener('durationchange',function(e){
+        console.log('durationchange',v.duration)
+    })
+    // loadedmetadata
+    v.addEventListener('loadedmetadata',function(e){
+        console.log('loadedmetadata')
+    })
+    // progress
+    v.addEventListener('progress',function(e){
+        console.log('progress')
+    })
+    // canplay
+    v.addEventListener('canplay',function(e){
+        console.log('canplay')
+    })
+    // canplaythrough 能够播放了
+    v.addEventListener('canplaythrough',function(e){
+        console.log('canplaythrough') // 使用js播放video时在这个监听下做 这样可以保证点击play
+        // 不会卡顿 因为视频还没加载好
+    })
+
+    // play pause 
+    v.addEventListener('pause',function(e){
+        console.log('pause')
+    })
+    // waiting
+    v.addEventListener('waiting',function(e){
+        console.log('waiting')
+    })
+    // playing
+    v.addEventListener('playing',function(e){
+        console.log('playing')
+    })
+    // timeupdate
+    v.addEventListener('timeupdate',function(e){
+        console.log('timeupdate')
+    })
+    // ended 视频结束
+    v.addEventListener('ended',function(e){
+        console.log('ended')
+    })
+    // error 
+    v.addEventListener('error',function(e){
+        console.log('error')
+    })
+</script>
+</html>

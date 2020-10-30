@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hls</title>
+    <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon" />
+    <script src="./hls.js"></script>
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+    <div class="container">
+        <div class="player pause">
+            <video id="video" controls></video>
+            <em class="btn"></em>
+            <div class="state">正在直播</div>
+        </div>
+        <div class="v-select">
+            <select name="" id="hls">
+            </select>
+          </div>
+          <div class="v-btn" id="hls-btn">播放</div>
+    </div>
+</body>
+<script src="../../js/adressArray.js"></script>
+<script>
+    let video = document.getElementById('video');
+    let hlsBtn = document.getElementById('hls-btn');
+    let btn = document.querySelector('.btn')
+    let player = document.querySelector('.player')
+    let videoSrc = 'http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8';
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('canplay', function() {
+            // video.play();
+        });
+    } else if (Hls.isSupported()) {
+        var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                // video.play();
+            });
+    }
+        btn.addEventListener('click',function(){
+            if (video.paused){
+                player.className = 'player'
+                video.play()
+            }
+            else{
+                player.className = 'player pause'
+                video.pause()
+            }
+        
+        })
+        hlsBtn.addEventListener('click',function(){
+            if (video.paused){
+                player.className = 'player'
+                video.play()
+            }
+            else{
+                player.className = 'player pause'
+                video.pause()
+            }
+            
+        })
+        video.addEventListener('play',function(){ // 有controls时生效
+            player.className = 'player'
+            video.play()
+        })
+        video.addEventListener('pause',function(){ // 有controls时生效
+            player.className = 'player pause'
+            video.pause()
+        })
+   
+   
+   
+    // video.addEventListener('click',function(){
+    //     if (video.paused){
+    //             video.play()
+    //         }
+    //         else{
+    //             video.pause()
+    //         }
+    // })
+
+
+      // 初始化 select
+    function addOption(node,list){
+        let obj=document.getElementById(node);
+            for(let i=0;i<list.length;i++){
+                obj.options[i]=new Option(list[i].key,list[i].value);    
+            }
+    }
+    //添加选项option
+    addOption('hls',hlsArray)
+    // 切换播放源
+    let hlsDom = document.getElementById('hls')
+    hlsDom.onchange = function(){
+        video.setAttribute('src',hlsDom.value)
+        player.className = 'player pause'
+        var hls = new Hls();
+            hls.loadSource(hlsDom.value);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.pause();
+            });
+    }
+</script>
+</html>

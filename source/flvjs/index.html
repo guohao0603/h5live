@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>http-Flv</title>
+    <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon" />
+    <script src="./flv.js"></script>
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <video id="videoElement" controls width="400" height="255"></video>
+            <div class="test1"></div>
+            <div class="test2"></div>
+        </div>
+        <div class="v-select">
+            <select name="" id="flv">
+            </select>
+        </div>
+        <div class="v-btn" id="flv-btn">播放</div>
+    </div>
+</body>
+<script src="../../js/adressArray.js"></script>
+<script>
+    let flvjs = window.flvjs;
+    let flvPlayer = null;
+    let flvBtn = document.getElementById('flv-btn')
+    // 初始化flv
+    function flv_load(url){
+        let videoElement = document.getElementById('videoElement');
+        flvPlayer = flvjs.createPlayer({
+            type: 'flv',
+            "isLive": true,
+            url: url
+        });
+        flvPlayer.attachMediaElement(videoElement);
+        flvPlayer.load();
+    }
+    if (flvjs.isSupported()) {
+        flv_load('http://localhost:7001/live/movie.flv')
+    }
+    // videoElement.addEventListener('click', function(){
+    //     document.querySelector('.test1').innerHTML = flvjs.getFeatureList().mseFlvPlayback
+    //     document.querySelector('.test2').innerHTML = flvjs.getFeatureList().mseLiveFlvPlayback
+    //         // alert( '是否支持点播视频：' + flvjs.getFeatureList().mseFlvPlayback + ' 是否支持httpflv直播流：' + flvjs.getFeatureList().mseLiveFlvPlayback )
+    // })
+    // 判断flv.js在手机端是否支持点播和httpflv直播：
+    // 是否支持点播视频：flvjs.getFeatureList().mseFlvPlayback
+    // 是否支持httpflv直播流：flvjs.getFeatureList().mseLiveFlvPlayback 
+    // 目前测试结果：
+    // ios ：均不支持，包括微信和safari
+    // 安卓：微信均不支持；其他浏览器部分支持点播，全部不支持直播
+    // 初始化 select
+    function addOption(node,list){
+        let obj=document.getElementById(node);
+        for(let i=0;i<list.length;i++){
+                obj.options[i]=new Option(list[i].key,list[i].value);    //方法三：
+        }
+    }
+    addOption('flv',httpFlvArray)
+    // 切换播放源
+    let flvDom = document.getElementById('flv')
+    flvDom.onchange = function(){
+        flv_destroy()
+        flv_load(flvDom.value)
+    }
+    // 重新加载flv,必须先销毁
+    function flv_destroy(){
+        flvPlayer.pause()
+        flvPlayer.unload()
+        flvPlayer.detachMediaElement()
+        flvPlayer.destroy()
+        flvPlayer = null
+    }
+    flvBtn.addEventListener('click',function(){
+        flvPlayer.play()
+    })
+    // function flv_pause() {
+    //     player.pause();
+    // }
+</script>
+</html>

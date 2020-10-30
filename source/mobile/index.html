@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hls</title>
+    <script>
+        document.documentElement.style.fontSize = (document.documentElement.clientWidth / 750)*100 + 'px';
+        /* safari上禁止缩放 */
+        window.onload = function() {
+            // 阻止双击放大
+            var lastTouchEnd = 0;
+            document.addEventListener('touchstart', function(event) {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            });
+            document.addEventListener('touchend', function(event) {
+                var now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            // 阻止双指放大
+            document.addEventListener('gesturestart', function(event) {
+                event.preventDefault();
+            });
+        }
+    </script>
+    <link rel="stylesheet" href="./index.css">
+    <script src="./hls.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <video  id="video" 
+                    x5-playsinline="" 
+                    playsinline="true" 
+                    webkit-playsinline="" 
+                    x-webkit-airplay="allow" 
+                    preload="true" 
+                    controls
+                >
+            </video>
+        </div>
+    </div>
+</body>
+<script>
+    let url = window.location.search.substr(5)
+    let video = document.getElementById('video');
+    let player = document.querySelector('.content')
+    let videoSrc = url;
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('canplay', function() {
+            // video.play();
+        });
+    } else if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                // video.play();
+            });
+    }
+
+    video.addEventListener('canplaythrough',function(e){
+        console.log('canplaythrough') 
+        // 使用js播放video时在这个监听下做 这样可以保证点击play
+        // 不会卡顿 因为视频还没加载好
+        player.addEventListener('touchstart',function(){
+            if (video.paused){
+                    video.play()
+                }
+            else{
+                video.pause()
+            }
+        })
+    })
+    
+</script>
+</html>
